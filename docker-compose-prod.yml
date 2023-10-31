@@ -1,0 +1,51 @@
+version: '2'
+
+services:
+  warranty-api:
+    container_name: warranty-api
+    image: truongnhan0311/ilogis:waranty-check-lastest
+    links:
+      - warranty-db
+      - warranty-redis
+    ports:
+      - "3002:3002"
+    restart: always
+    volumes:
+      - ./Docker/run.sh:/run.sh
+    environment:
+      ENVIRONMENT: "staging"
+      SERVER_NAME: "api.warrany.ilogis.vn"
+      ROOT_FOLDER: "/"
+      REDIS_HOST: "warranty-redis"
+      REDIS_PORT: '6379'
+      REDIS_PASS: ''
+      REDIS_DB: '3'
+      DB_HOST: "warranty-db"
+      DB_PORT: "3306"
+      DB_USER: "warrantyapi"
+      DB_PASSWORD: "App@rning2021!"
+      DB_DATABASE: "warrantyapi"
+      SECRET: "eKp^VoOp1Pj4G@V3uE"
+      LICENSEE: "api"
+  warranty-redis:
+    container_name: warranty-redis
+    image: redis:3.2-alpine
+    restart: always
+    ports:
+      - "6378:6379"
+    volumes:
+      - ./Docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+  warranty-db:
+    container_name: warranty-db
+    image: mariadb:10.5
+    environment:
+      MYSQL_ROOT_PASSWORD: App@rning2021!
+      MYSQL_DATABASE: warrantyapi
+      MYSQL_USER: warrantyapi
+      MYSQL_PASSWORD: App@rning2021!
+    volumes:
+      - ./db:/var/lib/mysql
+    ports:
+      - "33065:3306"
+    restart: always
